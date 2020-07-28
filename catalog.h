@@ -33,7 +33,6 @@ public:
 private:
   QVector<MediaItem> m_catalog;
   mutable bool saved;
-
 };
 
 #endif // CATALOG_H

@@ -7,8 +7,8 @@
 #include <QSet>
 #include <QTime>
 #include <QEvent>
+#include <QFormLayout>
 #include <QCloseEvent>
-#include <QMessageBox>
 #include <QStorageInfo>
 
 #include "devicewatcher.h"
@@ -17,6 +17,20 @@
 namespace Ui {
   class MainWindow;
 }
+
+class AddingDirDialog: public QDialog
+{
+  Q_OBJECT
+public:
+  explicit AddingDirDialog(QWidget *parent = 0);
+private:
+  QDialog *addingDir;
+  QFormLayout *layout;
+  QLabel *label;
+public:
+  void setText(QString text);
+
+};
 
 class MainWindow : public QMainWindow
 {

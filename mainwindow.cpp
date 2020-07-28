@@ -1,3 +1,7 @@
+#include <QMessageBox>
+
+#include <QButtonGroup>
+#include <QLineEdit>
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
@@ -107,19 +111,50 @@ void MainWindow::saveAs()
   return;
 }
 
+AddingDirDialog::AddingDirDialog(QWidget *parent) : QDialog(parent)
+{
+  setWindowTitle("Adding files...");
+  layout = new QFormLayout(this);
+  label = new QLabel(this);
+  layout->addWidget(label);
+  setLayout(layout);
+
+}
+
+void AddingDirDialog::setText(QString text)
+{
+
+  label->setText(text);
+
+}
+
 void MainWindow::addDirectory()
 {
+
   if (m_catalog == nullptr) {
       newCatalog();
      }
+
+
 
   QString path = getSinglePathSelection();
   if (path.isNull()) {
       return;
     }
-
+  QString message("Adding files from ");
+  message += path;
+  message += ", please wait....";
+  AddingDirDialog *addingDir = new AddingDirDialog;
+  addingDir->setText(message);
+  addingDir->show();
+  addingDir->repaint();
+  QApplication::processEvents();
+  delay(); // This delay is needed otherwise the dialog appears blank.
+  //Not sure why.
   m_catalog->addDirectory(path, path);
   m_catalog->printCatalog();
+  addingDir->hide();
+  delete addingDir;
 }
 
 void MainWindow::addVolume()
@@ -173,6 +208,10 @@ void MainWindow::slotDeviceAdded(const QString &dev)
 
 void MainWindow::startSearch()
 {
+  AddingDirDialog *addingDir = new AddingDirDialog;
+  addingDir->setText(QString("Searching...."));
+  addingDir->show();
+  delay();
   while (ui->treeWidget->topLevelItemCount() > 0) {
     ui->treeWidget->takeTopLevelItem(0);
 }
@@ -195,6 +234,8 @@ void MainWindow::startSearch()
       item2->setText(0, i->description());
       item2->setText(1, QString::number(i->size()));
     }
+  addingDir->hide();
+  delete addingDir;
 }
 
 void MainWindow::setEnableGui(bool enabled)
@@ -222,3 +263,4 @@ void MainWindow::closeEvent(QCloseEvent *event)
   delete m_watcher;
   delete ui;
 }
+
